@@ -1,0 +1,4 @@
+#don't push these to Github
+appsettings.json
+bin/
+obj/
