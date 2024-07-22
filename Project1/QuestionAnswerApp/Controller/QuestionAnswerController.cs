@@ -75,14 +75,6 @@ namespace QuestionAnswerConsoleApp.Controller
             var text = Console.ReadLine();
            
 
-            // Input validation to check if the input string is null, empty or less than 50 in length
-            //if (string.IsNullOrWhiteSpace(text) || text.Length < 50)
-           // {
-           // Console.WriteLine("The question text was too short. At least 50 characters including spaces needed. Nothing was added to the database.");
-           // return; // Exits this method and returns back to the switch case in the Run() method. 
-            //Execution will encounter a break and go to the code asking user to press any key to continue
-           // }
-
             var question = new Question { Text = text };
 
             try
@@ -123,7 +115,7 @@ namespace QuestionAnswerConsoleApp.Controller
                 try
                 {
                     var question = service.GetQuestionById(id);
-                    Console.WriteLine($"ID: {question.Id}, Text: {question.Text}");
+                    Console.WriteLine($"Question ID: {question.Id}, Text: {question.Text}");
                 
                     foreach (var answer in question.Answers)
                     {
@@ -153,18 +145,11 @@ namespace QuestionAnswerConsoleApp.Controller
                 try{
                 var question = service.GetQuestionById(id);
                 Console.WriteLine($"Here is the current text:");
-                Console.WriteLine("{question.Text}");
+                Console.WriteLine($"{question.Text}");
                 Console.WriteLine();
                 Console.WriteLine("Enter the text for your new question");
                 Console.WriteLine("At least 50 characters including spaces");
                 var newText = Console.ReadLine();
-
-                // Input validation to check if the input is null or empty
-            if (string.IsNullOrWhiteSpace(newText) || newText.Length < 50)
-            {
-                Console.WriteLine("The question text must be at least 50 characters long.");
-                return; // Exit the method and get back to the menu.
-            }
 
                 question.Text = newText;
 
@@ -173,17 +158,17 @@ namespace QuestionAnswerConsoleApp.Controller
                     service.UpdateQuestion(question);
                     Console.WriteLine("Question updated successfully.");
                 }
-                catch (ArgumentException ex)
+                catch (ArgumentException ex) //Handle the case where newText < 50 characters
                 {
                     Console.WriteLine(ex.Message);
                 }
 
-                }catch(KeyNotFoundException ex){
+                }catch(KeyNotFoundException ex){ //Handle the case where GetQuestionById() does not find Id
                     Console.WriteLine(ex.Message);
                 }
         
             }else{
-                //Handle the case where id is not a valid int
+                //Handle the case where user input for Id is not a valid int in the first place
                 Console.WriteLine("You did not enter an int");
             }
         }
@@ -221,6 +206,7 @@ namespace QuestionAnswerConsoleApp.Controller
                 var question = service.GetQuestionById(questionId);
             }
             catch(KeyNotFoundException ex){
+                //Handle the case where input is a valid int, but not a valid questionId
                 Console.WriteLine(ex.Message);
                 return;
             }
@@ -228,15 +214,7 @@ namespace QuestionAnswerConsoleApp.Controller
             
             Console.WriteLine("Think of a great response: (I need at least 50 characters including spaces):");
             var text = Console.ReadLine();
-            
-            //Some more input validation in the controller     
-            // If input is null, empty space, or less than 50 characters
-            if (string.IsNullOrWhiteSpace(text) || text.Length < 50)
-            {
-                Console.WriteLine("At least 50 characters in length...I need at least 50 characters to work with.");
-                return; // Return back to the switch case in the Run() method
-            }    
-                
+                            
                 var answer = new Answer { Text = text, QuestionId = questionId };
 
                 try
@@ -245,12 +223,12 @@ namespace QuestionAnswerConsoleApp.Controller
                     Console.WriteLine("Thanks for the response. Answer added successfully to the database.");
                 }
                 catch (ArgumentException ex)
-                {
+                {//Handle the case where input validation fails for Answer.text
                     Console.WriteLine(ex.Message);
                 }
             }
             else
-            {//Handle the case where input is not a valid int
+            {//Handle the case where input is not a valid int in the first place
                 Console.WriteLine("Sorry, but that ID was definitely not a valid int.");
             }
         }

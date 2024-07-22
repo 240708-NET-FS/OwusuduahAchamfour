@@ -71,7 +71,7 @@ namespace QuestionAnswerConsoleApp.Service
         {
             if (string.IsNullOrWhiteSpace(answer.Text) || answer.Text.Length < 50)
             {
-                throw new ArgumentException("Answer text must be at least 50 characters.");
+                throw new ArgumentException("I need at least 50 characters to work with.");
             }
             repository.AddAnswer(answer);
         }
