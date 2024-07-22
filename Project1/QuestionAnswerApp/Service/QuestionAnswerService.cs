@@ -7,10 +7,10 @@ namespace QuestionAnswerConsoleApp.Service
     // Handles business logic and interacts with the repository
     public class QuestionAnswerService
     {
-        private readonly QuestionAnswerRepository repository;
+        private readonly IQuestionAnswerRepository repository;
 
-        // Constructor for dependency injection
-        public QuestionAnswerService(QuestionAnswerRepository questionAnswerRepository)
+        // Constructor for dependency injection; interface is used for unit testing purposes
+        public QuestionAnswerService(IQuestionAnswerRepository questionAnswerRepository)
         {
             repository = questionAnswerRepository;
         }
@@ -23,6 +23,7 @@ namespace QuestionAnswerConsoleApp.Service
                 throw new ArgumentException("I'm sorry, but I need at least 50 characters to work with.\nOperation aborted.");
             }
             repository.AddQuestion(question);
+        
         }
 
         public List<Question> GetAllQuestions()

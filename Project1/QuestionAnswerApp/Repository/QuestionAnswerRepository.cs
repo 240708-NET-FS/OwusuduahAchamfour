@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 namespace QuestionAnswerConsoleApp.Repository
 {
     // Handles data operations for questions and answers
-    public class QuestionAnswerRepository
+    public class QuestionAnswerRepository : IQuestionAnswerRepository
     {
+       
         // Adds a new question to the database
         public void AddQuestion(Question question)
         {

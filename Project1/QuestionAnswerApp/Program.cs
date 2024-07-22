@@ -10,15 +10,16 @@ namespace QuestionAnswerConsoleApp
     {
         public static void Main(string[] args)
         {
-            // Declare and instantiate serviceProvider for dependency injection
-            //AddSingleton<T>() method creates only one instance of the service
+             
+             // Set up Dependency Injection
+             // Declare and instantiate serviceProvider for dependency injection
             var serviceProvider = new ServiceCollection()
-                .AddSingleton<QuestionAnswerRepository>() 
-                .AddSingleton<QuestionAnswerService>()
-                .AddSingleton<QuestionAnswerController>()
+                .AddScoped<IQuestionAnswerRepository, QuestionAnswerRepository>() // Register interface and implementation
+                .AddScoped<QuestionAnswerService>() // Register QuestionAnswerService
+                .AddScoped<QuestionAnswerController>() // Register QuestionAnswerController
                 .BuildServiceProvider();
 
-            // Declare controller and initialize with injection from serviceProvider
+            // Declare controller and initialize with injection from QuestionAnswerController by serviceProvider
             var controller = serviceProvider.GetService<QuestionAnswerController>();
 
             //Check if something was indeed injected into controller

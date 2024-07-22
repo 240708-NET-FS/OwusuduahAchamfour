@@ -8,9 +8,12 @@ namespace QuestionAnswerConsoleApp.Repository
     // Represents the database context for the application
     public class AppDbContext : DbContext
     {
+
         public DbSet<Question> Questions { get; set; } // Table for questions
         public DbSet<Answer> Answers { get; set; } // Table for answers
 
+    
+        
         // Configures the database connection string using optionsBuilder
         //As we did in class
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
