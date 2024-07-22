@@ -40,7 +40,7 @@ namespace QuestionAnswerConsoleApp.Service
             var question = repository.GetQuestionById(id);
             if (question == null)
             {
-                throw new KeyNotFoundException("Oh no! The question ID was not found.");
+                throw new KeyNotFoundException("Oh no! You entered a valid int, but no question has that ID.");
             }
             return question;
         }

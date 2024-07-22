@@ -144,8 +144,13 @@ namespace QuestionAnswerConsoleApp.Controller
         private void UpdateQuestionById()
         {
             Console.WriteLine("Enter the ID of the question you want to update:");
+            
+            //Controller checks to see if id is a valid int, if so,
+            //id is passed to the service for further checking to see if
+            //id is the id of a question in the db
             if (int.TryParse(Console.ReadLine(), out int id))
             {
+                try{
                 var question = service.GetQuestionById(id);
                 Console.WriteLine($"Here is the current text:");
                 Console.WriteLine("{question.Text}");
@@ -154,7 +159,7 @@ namespace QuestionAnswerConsoleApp.Controller
                 Console.WriteLine("At least 50 characters including spaces");
                 var newText = Console.ReadLine();
 
-            // Input validation to check if the input is null or empty
+                // Input validation to check if the input is null or empty
             if (string.IsNullOrWhiteSpace(newText) || newText.Length < 50)
             {
                 Console.WriteLine("The question text must be at least 50 characters long.");
@@ -172,12 +177,17 @@ namespace QuestionAnswerConsoleApp.Controller
                 {
                     Console.WriteLine(ex.Message);
                 }
-            }
-            else
-            {
-                Console.WriteLine("Invalid ID.");
+
+                }catch(KeyNotFoundException ex){
+                    Console.WriteLine(ex.Message);
+                }
+        
+            }else{
+                //Handle the case where id is not a valid int
+                Console.WriteLine("You did not enter an int");
             }
         }
+
 
         private void DeleteQuestionById()
         {
@@ -240,8 +250,8 @@ namespace QuestionAnswerConsoleApp.Controller
                 }
             }
             else
-            {
-                Console.WriteLine("Sorry, but that ID was definitely not valid.");
+            {//Handle the case where input is not a valid int
+                Console.WriteLine("Sorry, but that ID was definitely not a valid int.");
             }
         }
     }
