@@ -10,23 +10,29 @@ namespace QuestionAnswerConsoleApp.Service
         private readonly QuestionAnswerRepository repository;
 
         // Constructor for dependency injection
-        public QuestionAnswerService(QuestionAnswerRepository repo)
+        public QuestionAnswerService(QuestionAnswerRepository questionAnswerRepository)
         {
-            repository = repo;
+            repository = questionAnswerRepository;
         }
 
         public void AddQuestion(Question question)
         {
+            //Input validation: check to see if string is null, empty, or less than 50 characters
             if (string.IsNullOrWhiteSpace(question.Text) || question.Text.Length < 50)
             {
-                throw new ArgumentException("Question text must be at least 50 characters.");
+                throw new ArgumentException("I'm sorry, but I need at least 50 characters to work with.\nOperation aborted.");
             }
             repository.AddQuestion(question);
         }
 
         public List<Question> GetAllQuestions()
         {
-            return repository.GetAllQuestions();
+            var questions = repository.GetAllQuestions();
+            if (questions == null || !questions.Any())
+            {
+                throw new InvalidOperationException("Ouch! No questions were found in the questions table.");
+            }
+            return questions;
         }
 
         public Question GetQuestionById(int id)
@@ -34,7 +40,7 @@ namespace QuestionAnswerConsoleApp.Service
             var question = repository.GetQuestionById(id);
             if (question == null)
             {
-                throw new KeyNotFoundException("Question not found.");
+                throw new KeyNotFoundException("Oh no! The question ID was not found.");
             }
             return question;
         }
@@ -50,6 +56,14 @@ namespace QuestionAnswerConsoleApp.Service
 
         public void DeleteQuestion(int id)
         {
+            //First check to see if question exists before deletion
+            var question = repository.GetQuestionById(id);
+            
+            if (question == null)
+             {
+                throw new KeyNotFoundException("The question does not exist. Database not affected.");
+            }
+
             repository.DeleteQuestion(id);
         }
 

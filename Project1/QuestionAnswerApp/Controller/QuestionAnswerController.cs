@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 using QuestionAnswerConsoleApp.Entities;
 using QuestionAnswerConsoleApp.Service;
 using System;
@@ -58,12 +59,12 @@ namespace QuestionAnswerConsoleApp.Controller
                     case "7":
                         return; //This terminates the infite loop created by the while(true) and ends application
                     default:
-                        Console.WriteLine("Oops. You can only pick one of the menu options.");
+                        Console.WriteLine("Oops. You can only pick from the menu options.");
                         break;
                 }
-                    //Here is where execution will come after the break in the switch
+                    //Here is where execution will come after any break is reached in the switch case above
                     // Prompt the user to press any key to continue
-                    Console.WriteLine("Press any key to continue...");
+                    Console.WriteLine("Press any key to continue...I'll just wait.");
                     Console.ReadKey(); // Waits for the user to press a key
             }
         }
@@ -75,12 +76,12 @@ namespace QuestionAnswerConsoleApp.Controller
            
 
             // Input validation to check if the input string is null, empty or less than 50 in length
-            if (string.IsNullOrWhiteSpace(text) || text.Length < 50)
-            {
-            Console.WriteLine("The question text was too short. At least 50 characters including spaces needed. Nothing was added to the database.");
-            return; // Exits this method and returns back to the switch case in the Run() method. 
+            //if (string.IsNullOrWhiteSpace(text) || text.Length < 50)
+           // {
+           // Console.WriteLine("The question text was too short. At least 50 characters including spaces needed. Nothing was added to the database.");
+           // return; // Exits this method and returns back to the switch case in the Run() method. 
             //Execution will encounter a break and go to the code asking user to press any key to continue
-            }
+           // }
 
             var question = new Question { Text = text };
 
@@ -91,18 +92,25 @@ namespace QuestionAnswerConsoleApp.Controller
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);  
             }
         }
 
         private void ViewAllQuestions()
         {
-            var questions = service.GetAllQuestions();
-            foreach (var question in questions)
-            {
-                //Only show the first fifty characters of the question text
-                Console.WriteLine($"Question ID: {question.Id} -> {question.GetShortText()}");
+            try{
+                var questions = service.GetAllQuestions();
+                foreach (var question in questions)
+                {
+                    //Only show the first fifty characters of the question text by calling GetShortText()
+                    Console.WriteLine($"Question ID: {question.Id} -> {question.GetShortText()}");
+                }
+
             }
+            catch(InvalidOperationException ex){
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         private void ViewQuestionById()
@@ -174,30 +182,49 @@ namespace QuestionAnswerConsoleApp.Controller
         private void DeleteQuestionById()
         {
             Console.WriteLine("Please provide me the ID of the question to delete:");
+            //Some input validation in the controller: if user input parses to an int, output a variable called
+            //id as declared in the argument of TryParse(), and initialize id with the int from user input
             if (int.TryParse(Console.ReadLine(), out int id))
             {
+                try{
                 service.DeleteQuestion(id);
                 Console.WriteLine("Hope you wanted that question deleted. Because the question deleted successfully.");
+                }catch(KeyNotFoundException ex){
+                    Console.WriteLine(ex.Message);
+                }
             }
-            else
-            {
-                Console.WriteLine("Hmmmmm?...That ID was invalid.");
+            else{
+                //Handle the situation where user does not input an int
+                Console.WriteLine("You did not provide a valid integer...Operation aborted.");
             }
-        }
+         
+           }
 
         private void AddAnswerByQuestionId()
         {
             Console.WriteLine("Enter question ID to add an answer to:");
             if (int.TryParse(Console.ReadLine(), out int questionId))
             {
-                Console.WriteLine("Think of a great response: (I need at least 50 characters; includes spaces):");
-                var text = Console.ReadLine();
-     
-            // Input validation to check if the input is null or empty
+            
+            //First check to see if the Question ID exists in the database
+            try{
+                var question = service.GetQuestionById(questionId);
+            }
+            catch(KeyNotFoundException ex){
+                Console.WriteLine(ex.Message);
+                return;
+            }
+           
+            
+            Console.WriteLine("Think of a great response: (I need at least 50 characters including spaces):");
+            var text = Console.ReadLine();
+            
+            //Some more input validation in the controller     
+            // If input is null, empty space, or less than 50 characters
             if (string.IsNullOrWhiteSpace(text) || text.Length < 50)
             {
-                Console.WriteLine("The question text must be at least 50 characters long.");
-                return; // Exit the method early
+                Console.WriteLine("At least 50 characters in length...I need at least 50 characters to work with.");
+                return; // Return back to the switch case in the Run() method
             }    
                 
                 var answer = new Answer { Text = text, QuestionId = questionId };
@@ -205,7 +232,7 @@ namespace QuestionAnswerConsoleApp.Controller
                 try
                 {
                     service.AddAnswer(answer);
-                    Console.WriteLine("Answer added successfully to the database.");
+                    Console.WriteLine("Thanks for the response. Answer added successfully to the database.");
                 }
                 catch (ArgumentException ex)
                 {
