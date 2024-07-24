@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuestionAnswerConsoleApp.Entities;
-using System.IO;
 using Microsoft.Extensions.Configuration;
+
 
 namespace QuestionAnswerConsoleApp.Repository
 {
@@ -20,6 +20,7 @@ namespace QuestionAnswerConsoleApp.Repository
         {
             if (!optionsBuilder.IsConfigured)
             {
+
                 IConfigurationRoot configuration = new ConfigurationBuilder()
                                                     .SetBasePath(Directory.GetCurrentDirectory())
                                                     .AddJsonFile("appsettings.json")
@@ -27,6 +28,7 @@ namespace QuestionAnswerConsoleApp.Repository
 
                 var connectionString = configuration.GetConnectionString("DefaultConnection");
                 optionsBuilder.UseSqlServer(connectionString);
+            
             }
         }
 

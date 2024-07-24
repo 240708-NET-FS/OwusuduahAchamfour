@@ -3,6 +3,7 @@ using QuestionAnswerConsoleApp.Controller;
 using QuestionAnswerConsoleApp.Repository;
 using QuestionAnswerConsoleApp.Service;
 using System;
+using Microsoft.Data.SqlClient;
 
 namespace QuestionAnswerConsoleApp
 {
@@ -25,8 +26,24 @@ namespace QuestionAnswerConsoleApp
             //Check if something was indeed injected into controller
             if (controller != null)
             {
+                try{
+
                 // Run the application if something was injected into controller
                 controller.Run();
+                
+                }catch(SqlException ex){
+                   
+                    Console.WriteLine("Closing the application due to problem connecting to SQL database server:");
+                    Console.WriteLine(ex.Message);
+                    Environment.Exit(1);
+                
+                }catch(Exception ex){
+
+                    Console.WriteLine("Something went wrong. But it's not related to connecting to the SQL server though.");
+                    Console.WriteLine("Closing the application");
+                    Console.WriteLine(ex.Message);
+                    Environment.Exit(1);
+                }
             }
             else
             {
